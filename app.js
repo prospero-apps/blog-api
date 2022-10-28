@@ -36,17 +36,17 @@ passport.use(
   })
 )
 
-passport.use(
-  new JWTStrategy({
-    jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-    secretOrKey: process.env.JWT_SECRET
-  }, (err, token, done) => {
-     if (err) {
-      return next(err)
-     }
-     return done(null, token.user)
-  })
-)
+// passport.use(
+//   new JWTStrategy({
+//     jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+//     secretOrKey: process.env.JWT_SECRET
+//   }, (err, token, done) => {
+//      if (err) {
+//       return next(err)
+//      }
+//      return done(null, token.user)
+//   })
+// )
 
 const compression = require('compression')
 const helmet = require('helmet')
