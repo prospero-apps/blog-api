@@ -28,11 +28,30 @@ exports.signup = [
         if (err) {
           return next(err)
         }
-        res.redirect('/')
+        res.redirect('/');
       })
     })  
   }
 ]
+
+// signup - TEMP
+// exports.signup = async (req, res, next) => {
+//   // const user = new User({
+//   //   username: req.body.username,
+//   //   password: req.body.password
+//   // });
+//   // let result = await user.save(err => {
+//   //   if (err) {
+//   //     return next(err)
+//   //   }
+//   //   // res.redirect('/')
+//   //   res.send(result);
+//   // })
+
+//   const user = new User(req.body);
+//   let result = await user.save();
+//   res.send(result);
+// }
 
 
 // log in
