@@ -36,9 +36,10 @@ exports.single_post = (req, res, next) => {
 // create post
 exports.create_post = [
   // Validate and sanitize
-  body('title', 'Title is required.').trim().escape(),
+  body('title', 'Title is required.').trim(),
   body('user', 'User is required.').trim().escape(),
-  body('content', 'Content is required.').trim().escape(),
+  body('content', 'Content is required.').trim(),
+  body('published', 'Published info is required.').trim().escape(),
 
   // Process request
   (req, res, next) => {
@@ -50,17 +51,18 @@ exports.create_post = [
       })
       return
     }
-    const { title, user, content } = req.body
+    const { title, user, content, published } = req.body
     const blogpost = new Blogpost({
       title,
       user,
-      content
+      content,
+      published
     })
-    blogpost.save((err) => {
+    blogpost.save((err, result) => {
       if (err) {
         return next(err)
       }
-      res.status(200).json({ msg: 'post created' })
+      res.send(result)
     })
   }
 ]
@@ -69,9 +71,10 @@ exports.create_post = [
 // update post
 exports.update_post = [
   // Validate and sanitize
-  body('title', 'Title is required.').trim().escape(),
+  body('title', 'Title is required.').trim(),
   body('user', 'User is required.').trim().escape(),
-  body('content', 'Content is required.').trim().escape(),
+  body('content', 'Content is required.').trim(),
+  body('published', 'Published info is required.').trim().escape(),
 
   // Process request
   (req, res, next) => {
@@ -92,7 +95,7 @@ exports.update_post = [
       _id: req.params.postId
     })
 
-    Blogpost.findByIdAndUpdate(req.params.postId, blogpost, {}, (err, theblogpost) => {
+    Blogpost.findByIdAndUpdate(req.params.postId, blogpost, (err, theblogpost) => {
       if (err) {
         return next(err)
       }
@@ -109,5 +112,5 @@ exports.delete_post = (req, res, next) => {
       return next(err)
     }
     res.json({ msg: 'Post deleted' })
-  })
+  })  
 }

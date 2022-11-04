@@ -37,7 +37,7 @@ exports.create_comment = [
   // Validate and sanitize
   body('blogpost', 'Post is required.').trim().escape(),
   body('user', 'User is required.').trim().escape(),
-  body('content', 'Content is required.').trim().escape(),
+  body('content', 'Content is required.').trim(),
 
   // Process request
   (req, res, next) => {
@@ -55,11 +55,11 @@ exports.create_comment = [
       user,
       content
     })
-    comment.save((err) => {
+    comment.save((err, result) => {
       if (err) {
         return next(err)
       }
-      res.status(200).json({ msg: 'comment created' })
+      res.send(result)
     })
   }
 ]
@@ -103,7 +103,7 @@ exports.delete_comment = (req, res, next) => {
     if (err) {
       return next(err)
     }
-    res.json({ msg: 'Post deleted' })
+    res.json({ msg: 'comment deleted' })
   })
 }
 

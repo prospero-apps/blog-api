@@ -5,48 +5,34 @@ const cookieParser = require('cookie-parser')
 const logger = require('morgan')
 require('dotenv').config()
 const passport = require('passport')
-const LocalStrategy = require('passport-local').Strategy
+// const LocalStrategy = require('passport-local').Strategy
 const passportJWT = require('passport-jwt')
-// const JWTStrategy = passportJWT.Strategy
-// const ExtractJWT = passportJWT.ExtractJwt
+const JWTStrategy = passportJWT.Strategy
+const ExtractJWT = passportJWT.ExtractJwt
 const bcrypt = require('bcryptjs')
 const cors = require('cors')
 
 const User = require('./models/user')
 const indexRouter = require('./routes/index')
 
-// Passport authentication
-passport.use(  
-  new LocalStrategy((username, password, done) => {
-    User.findOne({ username }, (err, user) => {
-      if (err) {
-        return done(err)
-      }
-      if (!user) {
-        return done(null, false, { message: 'Incorrect username'})
-      }
-      bcrypt.compare(password, user.password, (err, res) => {
-        if (res) {
-          return done(null, user, { message: 'Logged In Successfully'})
-        } else {
-          return done(null, false, { message: 'Incorrect password'})
-        }
-      })      
-    })
-  })
-)
+// Passport
+const opts = {}
+opts.jwtFromRequest = ExtractJWT.fromAuthHeaderAsBearerToken()
+opts.secretOrKey = process.env.JWT_SECRET
 
-// passport.use(
-//   new JWTStrategy({
-//     jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-//     secretOrKey: process.env.JWT_SECRET
-//   }, (err, token, done) => {
-//      if (err) {
-//       return next(err)
-//      }
-//      return done(null, token.user)
-//   })
-// )
+passport.use(new JWTStrategy(opts, function (jwt_payload, done) {
+  User.findOne({ id: jwt_payload.id }, function (err, user) {
+    if (err) {
+      return done(err, false)
+    }
+    if (user) {
+      return done(null, user)
+    } else {
+      return done(null, false)
+    }
+  })
+}))
+
 
 const compression = require('compression')
 const helmet = require('helmet')
@@ -73,6 +59,9 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(compression())
 app.use(cors())
+
+app.use(passport.initialize())
+
 app.use(express.static(path.join(__dirname, 'public')))
 
 app.use('/', indexRouter)

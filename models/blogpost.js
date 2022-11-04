@@ -5,7 +5,7 @@ const BlogpostSchema = new Schema({
   title: { type: String, required: true },
   user: { type: Schema.Types.ObjectId, ref: "User", required: true },
   content: { type: String, required: true },
-  published: { type: Boolean, default: true },
+  published: { type: Boolean, required: true },
   date: { type: Date, default: Date.now },
 });
 
